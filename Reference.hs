@@ -187,7 +187,7 @@ eval (Assign (Loc l) t, st) = do
     Just t' -> if (isVal t)
                  then return (TmUnit, substStore l t st)
                  else throwError InvalidTypeError
-    _       -> return (TmUnit, (l, t) : st)
+    _       -> return (TmUnit, (l, t) |:| st)
 eval (Assign t1 t2, st) = do
   (t1', st1) <- eval (t1, st)
   (t2', st2) <- eval (t2, st)
