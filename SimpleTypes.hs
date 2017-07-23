@@ -115,21 +115,19 @@ typeOf ctx (TmApp t1 t2) = do
 ----------------------------------------------------------------------
 -- (One-step) Evaluation
 ----------------------------------------------------------------------
-eval :: Fresh m => Ctx -> Term -> ExceptT TypeException m Term
+eval :: Fresh m => Ctx -> Term -> m Term
 eval ctx (TmApp (TmAbs ty b) t) = do
   (x, t') <- unbind b
   case (isVal t) of
     True -> return $ subst x t t'
 eval ctx (TmApp t1 t2) = do
-  ctx1 <- extractCtx ctx t1
-  ctx2 <- extractCtx ctx t2
-  t1' <- eval ctx1 t1
-  t2' <- eval ctx2 t2
+  t1' <- eval ctx t1
+  t2' <- eval ctx t2
   if (isVal t1)
     then return $ TmApp t1 t2'
     else return $ TmApp t1' t2
 
-evalRec :: Fresh m => Ctx -> Term -> ExceptT TypeException m Term
+evalRec :: Fresh m => Ctx -> Term -> m Term
 evalRec ctx t = do
   t' <- eval ctx t
   if (isVal t')
